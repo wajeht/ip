@@ -34,8 +34,11 @@ app.use(compression());
 app.use(express.static(path.resolve(path.join(process.cwd(), 'public')), { maxAge: '24h' }));
 
 app.get('/', (req, res) => {
-	const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-	return res.send(ip.split(',')[0] + '\n');
+	const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
+	if (req.get('Content-Type') === 'application/json') {
+		return res.json({ ip });
+	}
+	return res.send(ip + '\n');
 });
 
 app.get('/healthz', (req, res) => res.json({ message: 'ok' }));
