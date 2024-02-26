@@ -18,4 +18,6 @@ app.get('*', (req, res) => {
   return res.send(ip + '\n');
 });
 
+app.get('/healthz', (req, res) => res.json({ message: "ok"}))
+
 app.listen(PORT, () => console.log(`Server running on port http://localhost:${PORT}`));
