@@ -1,12 +1,20 @@
 import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors'
+import compression from 'compression';
 
-const app = express();
 const PORT = process.env.PORT || 8080;
 
+const app = express();
+
 app.enable('trust proxy');
+app.use(cors());
+app.use(helmet());
+app.use(compression());
 
 app.get('*', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  console.log(ip);
   return res.send(ip + '\n');
 });
 
