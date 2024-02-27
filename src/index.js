@@ -47,6 +47,6 @@ app.use((req, res, _next) => res.status(404).json({ message: 'not found' }));
 
 app.use((err, req, res, _next) => res.status(500).json({ message: 'error' }));
 
-app.listen(PORT, () => console.log(`Server was started on port http://localhost:${PORT}`));
-
 export { app };
+
+app.listen(PORT, () => console.log(`Server was started on port http://localhost:${PORT}`));
