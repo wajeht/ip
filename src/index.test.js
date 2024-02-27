@@ -4,7 +4,7 @@ import { app as server } from './index.js';
 
 const app = request(server);
 
-it('should send a JSON response', async () => {
+it('should be able to get an ip address', async () => {
 	const response = await app.get('/').set('Content-Type', 'application/json');
 	expect(response.status).toBe(200);
 	expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
