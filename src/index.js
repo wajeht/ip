@@ -47,6 +47,22 @@ app.use((req, res, _next) => res.status(404).json({ message: 'not found' }));
 
 app.use((err, req, res, _next) => res.status(500).json({ message: 'error' }));
 
-export { app };
+const server = app.listen(PORT, () => {
+	console.log(`Server was started on http://localhost:${PORT}`);
+});
 
-app.listen(PORT, () => console.log(`Server was started on port http://localhost:${PORT}`));
+function gracefulShutdown() {
+	console.log('Received kill signal, shutting down gracefully.');
+	server.close(() => {
+		console.log('HTTP server closed.');
+		process.exit(0);
+	});
+}
+
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
+process.on('unhandledRejection', (reason, promise) => {
+	console.error('Unhandled Rejection at: ', promise, ' reason: ', reason);
+});
+
+export { app };
