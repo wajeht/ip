@@ -2,10 +2,13 @@ import path from 'path';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import compression from 'compression';
 import { rateLimit as rl } from 'express-rate-limit';
 
-const PORT = process.env.PORT || 8080;
+dotenv.config({ path: path.resolve(path.join(process.cwd(), '.env')) });
+
+const PORT = process.env.PORT || 8081;
 
 const app = express();
 
@@ -17,6 +20,12 @@ app.use(
 		limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
 		standardHeaders: 'draft-7',
 		legacyHeaders: false,
+		skip: async function (req, _res) {
+			const myIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
+			const myIpWasConnected = myIp === process.env.MY_IP;
+			if (myIpWasConnected) console.log(`my ip was connected: ${myIp}`);
+			return myIpWasConnected;
+		},
 		message: (req, res) => {
 			return res.json({
 				message: 'Too many requests, please try again later?',
