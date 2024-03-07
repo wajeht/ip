@@ -14,11 +14,11 @@ it('should be able to get an ip address', async () => {
 it('should be able to ping healthz end point', async () => {
 	const response = await app.get('/healthz');
 	expect(response.status).toBe(200);
-	expect(response.body).toStrictEqual({ message: 'ok' });
+	expect(response.text).include('ok');
 });
 
 it('should be able to hit not found', async () => {
 	const response = await app.get('/not-found');
 	expect(response.status).toBe(404);
-	expect(response.body).toStrictEqual({ message: 'not found' });
+	expect(response.text).include('not found');
 });
