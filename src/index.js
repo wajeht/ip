@@ -27,9 +27,17 @@ app.use(
 			return myIpWasConnected;
 		},
 		message: (req, res) => {
-			return res.json({
-				message: 'Too many requests, please try again later?',
-			});
+			const message = 'Too many requests, please try again later?';
+
+			if (req.query.format === 'json' || req.query.json === 'true') {
+				return res.status(429).json({ message });
+			}
+
+			if (req.get('Content-Type') === 'application/json') {
+				return res.status(429).json({ message });
+			}
+
+			return res.status(429).send(message + '\n');
 		},
 	}),
 );
@@ -42,19 +50,53 @@ app.use(compression());
 
 app.use(express.static(path.resolve(path.join(process.cwd(), 'public')), { maxAge: '24h' }));
 
-app.get('/', (req, res) => {
-	const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
-	if (req.get('Content-Type') === 'application/json') {
-		return res.json({ ip });
+app.get('/', async (req, res, next) => {
+	try {
+		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
+
+		if (req.query.format === 'json' || req.query.json === 'true') {
+			return res.status(200).json({ ip });
+		}
+
+		if (req.get('Content-Type') === 'application/json') {
+			return res.status(200).json({ ip });
+		}
+
+		return res.status(200).send(ip + '\n');
+	} catch (error) {
+		next(error);
 	}
-	return res.send(ip + '\n');
 });
 
-app.get('/healthz', (req, res) => res.json({ message: 'ok' }));
+app.get('/healthz', (req, res) => {
+	const message = 'ok';
 
-app.use((req, res, _next) => res.status(404).json({ message: 'not found' }));
+	if (req.get('Content-Type') === 'application/json') {
+		return res.status(200).json({ message });
+	}
 
-app.use((err, req, res, _next) => res.status(500).json({ message: 'error' }));
+	return res.status(200).send(message + '\n');
+});
+
+app.use((req, res, _next) => {
+	const message = 'not found';
+
+	if (req.get('Content-Type') === 'application/json') {
+		return res.status(404).json({ message });
+	}
+
+	return res.status(404).send(message + '\n');
+});
+
+app.use((err, req, res, _next) => {
+	const message = 'error';
+
+	if (req.get('Content-Type') === 'application/json') {
+		return res.status(500).json({ message });
+	}
+
+	return res.status(500).send(message + '\n');
+});
 
 const server = app.listen(PORT, () => {
 	console.log(`Server was started on http://localhost:${PORT}`);
