@@ -1,5 +1,6 @@
 import path from 'path';
-import express from 'express';
+// @ts-ignore
+import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -26,7 +27,7 @@ app.use(
 			if (myIpWasConnected) console.log(`my ip was connected: ${myIp}`);
 			return myIpWasConnected;
 		},
-		message: (req, res) => {
+		message: (req: Request, res: Response) => {
 			const message = 'Too many requests, please try again later?';
 
 			if (req.query.format === 'json' || req.query.json === 'true') {
@@ -50,7 +51,7 @@ app.use(compression());
 
 app.use(express.static(path.resolve(path.join(process.cwd(), 'public')), { maxAge: '24h' }));
 
-app.get('/', async (req, res, next) => {
+app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
 
@@ -68,7 +69,7 @@ app.get('/', async (req, res, next) => {
 	}
 });
 
-app.get('/healthz', (req, res) => {
+app.get('/healthz', (req: Request, res: Response, next: NextFunction) => {
 	const message = 'ok';
 
 	if (req.get('Content-Type') === 'application/json') {
@@ -78,7 +79,7 @@ app.get('/healthz', (req, res) => {
 	return res.status(200).send(message + '\n');
 });
 
-app.use((req, res, _next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
 	const message = 'not found';
 
 	if (req.get('Content-Type') === 'application/json') {
@@ -88,7 +89,7 @@ app.use((req, res, _next) => {
 	return res.status(404).send(message + '\n');
 });
 
-app.use((err, req, res, _next) => {
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 	const message = 'error';
 
 	if (req.get('Content-Type') === 'application/json') {
