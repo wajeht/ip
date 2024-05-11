@@ -57,8 +57,10 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
 
 		const verbose = req.query.verbose === 'true';
-		const json = req.query.format === 'json' || req.query.json === 'true';
-		const contentType = req.get('Content-Type') === 'application/json';
+		const json =
+			req.query.format === 'json' ||
+			req.query.json === 'true' ||
+			req.get('Content-Type') === 'application/json';
 		const geo = geoIpLite.lookup(ip);
 		let formattedGeo = `${ip}`;
 
@@ -77,14 +79,10 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 		}
 
 		if (json && verbose) {
-			return res.status(200).json({ ip, geo });
+			return res.status(200).json({ ip, ...geo });
 		}
 
-		if (json && verbose && contentType) {
-			return res.status(200).json({ ip, geo });
-		}
-
-		if (json || contentType) {
+		if (json) {
 			return res.status(200).json({ ip });
 		}
 
