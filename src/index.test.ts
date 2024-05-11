@@ -9,6 +9,7 @@ const app = request(server);
 
 it('should return with verbose and html', async () => {
 	const ip = '127.0.0.1';
+
 	const mockGeoData = {
 		range: [123456789, 123456789],
 		country: 'US',

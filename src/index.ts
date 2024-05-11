@@ -39,7 +39,7 @@ app.use(
 				return res.status(429).json({ message });
 			}
 
-			return res.status(429).send(message + '\n');
+			return res.status(429).send(message);
 		},
 	}),
 );
@@ -77,11 +77,14 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
 
 		const verbose = req.query.verbose === 'true';
+
 		const json =
 			req.query.format === 'json' ||
 			req.query.json === 'true' ||
 			req.get('Content-Type') === 'application/json';
+
 		const geo = geoIpLite.lookup(ip);
+
 		let formattedGeo = `${ip}`;
 
 		if (verbose) {
@@ -136,7 +139,7 @@ app.get('/healthz', (req: Request, res: Response, next: NextFunction) => {
 		return res.status(200).json({ message });
 	}
 
-	return res.status(200).send(message + '\n');
+	return res.status(200).send(message);
 });
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -146,7 +149,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 		return res.status(404).json({ message });
 	}
 
-	return res.status(404).send(message + '\n');
+	return res.status(404).send(message);
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -156,7 +159,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 		return res.status(500).json({ message });
 	}
 
-	return res.status(500).send(message + '\n');
+	return res.status(500).send(message);
 });
 
 const server = app.listen(PORT, () => {
@@ -165,6 +168,7 @@ const server = app.listen(PORT, () => {
 
 function gracefulShutdown() {
 	console.log('Received kill signal, shutting down gracefully.');
+
 	server.close(() => {
 		console.log('HTTP server closed.');
 		process.exit(0);
