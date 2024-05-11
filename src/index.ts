@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import compression from 'compression';
+import geoIpLite from 'geoip-lite';
 import { rateLimit as rl } from 'express-rate-limit';
 
 dotenv.config({ path: path.resolve(path.join(process.cwd(), '.env')) });
@@ -55,15 +56,54 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
 
-		if (req.query.format === 'json' || req.query.json === 'true') {
+		const verbose = req.query.verbose === 'true';
+		const json = req.query.format === 'json' || req.query.json === 'true';
+		const contentType = req.get('Content-Type') === 'application/json';
+		const geo = geoIpLite.lookup(ip);
+		let formattedGeo = `${ip}`;
+
+		if (verbose) {
+			formattedGeo = `<strong>ip:</strong>: ${ip}\n`;
+			// @ts-ignore
+			formattedGeo += Object.keys(geo)
+				.map((key, index) =>
+					index === 0
+						? // @ts-ignore
+							`<strong>${key}</strong>: ${geo[key]}`
+						: // @ts-ignore
+							`<strong>${key}</strong>: ${geo[key]}`,
+				)
+				.join('\n');
+		}
+
+		if (json && verbose) {
+			return res.status(200).json({ ip, geo });
+		}
+
+		if (json && verbose && contentType) {
+			return res.status(200).json({ ip, geo });
+		}
+
+		if (json || contentType) {
 			return res.status(200).json({ ip });
 		}
 
-		if (req.get('Content-Type') === 'application/json') {
-			return res.status(200).json({ ip });
-		}
+		const htmlResponse = `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+				<meta charset="UTF-8">
+				<meta http-equiv="X-UA-Compatible" content="IE=edge">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>ip</title>
+		</head>
+		<body>
+				<pre>${formattedGeo}</pre>
+		</body>
+		</html>
+`;
 
-		return res.status(200).send(ip + '\n');
+		return res.setHeader('Content-Type', 'text/html').status(200).send(htmlResponse);
 	} catch (error) {
 		next(error);
 	}
@@ -80,7 +120,7 @@ app.get('/healthz', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-	const message = 'not found';
+	const message = 'Not found';
 
 	if (req.get('Content-Type') === 'application/json') {
 		return res.status(404).json({ message });
@@ -90,7 +130,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-	const message = 'error';
+	const message = 'Error';
 
 	if (req.get('Content-Type') === 'application/json') {
 		return res.status(500).json({ message });
