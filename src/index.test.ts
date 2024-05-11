@@ -20,5 +20,5 @@ it('should be able to ping healthz end point', async () => {
 it('should be able to hit not found', async () => {
 	const response = await app.get('/not-found');
 	expect(response.status).toBe(404);
-	expect(response.text).include('not found');
+	expect(response.text).include('Not found');
 });
