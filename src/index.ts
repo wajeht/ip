@@ -76,33 +76,33 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(', ')[0];
 
-		const verbose = req.query.verbose === 'true';
+		const geo = req.query.geo === 'true';
 
 		const json =
 			req.query.format === 'json' ||
 			req.query.json === 'true' ||
 			req.get('Content-Type') === 'application/json';
 
-		const geo = geoIpLite.lookup(ip);
+		const found = geoIpLite.lookup(ip);
 
 		let formattedGeo = `${ip}`;
 
-		if (verbose) {
+		if (geo) {
 			formattedGeo = `<strong>ip:</strong> ${ip}\n`;
 			// @ts-ignore
-			formattedGeo += Object.keys(geo)
+			formattedGeo += Object.keys(found)
 				.map((key, index) =>
 					index === 0
 						? // @ts-ignore
-							`<strong>${key}</strong>: ${geo[key]}`
+							`<strong>${key}</strong>: ${found[key]}`
 						: // @ts-ignore
-							`<strong>${key}</strong>: ${geo[key]}`,
+							`<strong>${key}</strong>: ${found[key]}`,
 				)
 				.join('\n');
 		}
 
-		if (json && verbose) {
-			return res.status(200).json({ ip, ...geo });
+		if (json && geo) {
+			return res.status(200).json({ ip, ...found });
 		}
 
 		if (json) {

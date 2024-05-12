@@ -7,8 +7,8 @@
 If the IP address was found, the lookup method returns an object with the following structure:
 
 ```javascript
-// https://ip.jaw.dev/?verbose=true
-// https://ip.jaw.dev/?verbose=true&json=true
+// https://ip.jaw.dev/?geo=true
+// https://ip.jaw.dev/?geo=true&json=true
 {
    ip: '127.0.0.1',               // ip address
    range: [420, 69],              // <low bound of IP block>, <high bound of IP block>

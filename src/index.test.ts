@@ -7,7 +7,7 @@ vi.mock('geoip-lite');
 
 const app = request(server);
 
-it('should return with verbose and html', async () => {
+it('should return with geo and html', async () => {
 	const ip = '127.0.0.1';
 
 	const mockGeoData = {
@@ -24,7 +24,7 @@ it('should return with verbose and html', async () => {
 
 	geoIpLite.lookup.mockReturnValueOnce(mockGeoData);
 
-	const response = await app.get(`/?verbose=true`).set('x-forwarded-for', ip);
+	const response = await app.get(`/?geo=true`).set('x-forwarded-for', ip);
 
 	expect(response.headers['content-type']).toBe('text/html; charset=utf-8');
 	expect(response.text).includes(ip);
@@ -34,7 +34,7 @@ it('should return with verbose and html', async () => {
 	expect(geoIpLite.lookup).toHaveBeenCalledTimes(1);
 });
 
-it('should return with verbose and json', async () => {
+it('should return with geo and json', async () => {
 	const ip = '127.0.0.1';
 
 	const mockGeoData = {
@@ -51,7 +51,7 @@ it('should return with verbose and json', async () => {
 
 	geoIpLite.lookup.mockReturnValueOnce(mockGeoData);
 
-	const response = await app.get(`/?verbose=true&json=true`).set('x-forwarded-for', ip);
+	const response = await app.get(`/?geo=true&json=true`).set('x-forwarded-for', ip);
 
 	expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
 	expect(response.text).includes(ip);
