@@ -7,8 +7,11 @@
 If the IP address was found, the lookup method returns an object with the following structure:
 
 ```javascript
+// https://ip.jaw.dev/?verbose=true
+// https://ip.jaw.dev/?verbose=true&json=true
 {
-   range: [ <low bound of IP block>, <high bound of IP block> ],
+   ip: '127.0.0.1',               // ip address
+   range: [420, 69],              // <low bound of IP block>, <high bound of IP block>
    country: 'XX',                 // 2 letter ISO-3166-1 country code
    region: 'RR',                  // Up to 3 alphanumeric variable length characters as ISO 3166-2 code
                                   // For US states this is the 2 letter state
@@ -17,9 +20,9 @@ If the IP address was found, the lookup method returns an object with the follow
    eu: '0',                       // 1 if the country is a member state of the European Union, 0 otherwise.
    timezone: 'Country/Zone',      // Timezone from IANA Time Zone Database
    city: "City Name",             // This is the full city name
-   ll: [<latitude>, <longitude>], // The latitude and longitude of the city
-   metro: <metro code>,           // Metro code
-   area: <accuracy_radius>        // The approximate accuracy radius (km), around the latitude and longitude
+   ll: [420, 69],                 // The latitude and longitude of the city
+   metro: 420,                    // Metro code
+   area: 69                       // The approximate accuracy radius (km), around the latitude and longitude
 }
 ```
 
