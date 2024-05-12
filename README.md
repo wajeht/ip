@@ -6,7 +6,7 @@
 
 If the IP address was found, the lookup method returns an object with the following structure:
 
-```json
+```javascript
 {
    range: [ <low bound of IP block>, <high bound of IP block> ],
    country: 'XX',                 // 2 letter ISO-3166-1 country code
