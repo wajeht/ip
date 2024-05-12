@@ -88,7 +88,7 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 		let formattedGeo = `${ip}`;
 
 		if (verbose) {
-			formattedGeo = `<strong>ip:</strong>: ${ip}\n`;
+			formattedGeo = `<strong>ip:</strong> ${ip}\n`;
 			// @ts-ignore
 			formattedGeo += Object.keys(geo)
 				.map((key, index) =>
@@ -123,8 +123,7 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 		<body>
 				<pre>${formattedGeo}</pre>
 		</body>
-		</html>
-`;
+		</html>`;
 
 		return res.setHeader('Content-Type', 'text/html').status(200).send(htmlResponse);
 	} catch (error) {
