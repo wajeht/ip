@@ -1,6 +1,0 @@
-#!/usr/bin/expect
-
-spawn aicommits --type conventional
-expect "Use this commit message?"
-send "\r"
-interact

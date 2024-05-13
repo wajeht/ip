@@ -2,5 +2,5 @@ push:
 	go test
 	go fmt
 	git add -A
-	./commit.sh
+	aicommits --type conventional
 	git push --no-verify
