@@ -10,3 +10,6 @@ test:
 
 format:
 	go fmt
+
+update-db:
+	curl -O https://git.io/GeoLite2-City.mmdb

@@ -8,7 +8,8 @@ WORKDIR /go/src/app
 
 COPY . .
 
-RUN curl -O https://git.io/GeoLite2-City.mmdb
+# fk it, we gon do this manually
+# RUN curl -O https://git.io/GeoLite2-City.mmdb
 
 RUN go build -o ip .
 
