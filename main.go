@@ -143,7 +143,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	const PORT = 8080
+	const PORT = 80
 
 	mux := http.NewServeMux()
 
