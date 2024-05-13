@@ -6,9 +6,9 @@ ENV ENV=production
 
 WORKDIR /go/src/app
 
-RUN curl -O https://git.io/GeoLite2-City.mmdb
-
 COPY . .
+
+RUN curl -O https://git.io/GeoLite2-City.mmdb
 
 RUN go build -o ip .
 
