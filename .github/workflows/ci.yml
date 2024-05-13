@@ -10,7 +10,7 @@ env:
 
 jobs:
   test:
-    name: Unit tests
+    name: Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         run: go test ./...
 
   lint:
-    name: GoLint
+    name: Lint
     needs: [test]
     runs-on: ubuntu-latest
 
@@ -43,7 +43,7 @@ jobs:
         run: golangci-lint run
 
   format:
-    name: GoFmt
+    name: Format
     needs: [lint]
     runs-on: ubuntu-latest
 
@@ -58,7 +58,7 @@ jobs:
         run: go fmt ./...
 
   deploy:
-    name: Deploy to caprover
+    name: Deploy to production
     needs: [format]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -78,7 +78,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
 
-      - name: Deploy Image to CapRover
+      - name: Deploy Image to Production
         uses: caprover/deploy-from-github@v1.1.2
         with:
           server: '${{ secrets.CAPROVER_SERVER }}'
