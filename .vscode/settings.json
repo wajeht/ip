@@ -4,6 +4,8 @@
 		"FIPS",
 		"geoip",
 		"healthz",
+		"mmdb",
+		"oschwald",
 		"subcountry",
 		"wajeht"
 	]

@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"strings"
+
+	"github.com/oschwald/geoip2-golang"
 )
 
 const PORT = 80
@@ -37,6 +39,27 @@ func getIPAddress(r *http.Request) string {
 	return ipAddress
 }
 
+func LookupLocation(ipStr string) *geoip2.City {
+	db, err := geoip2.Open("GeoLite2-City.mmdb")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	ip := net.ParseIP(ipStr)
+
+	if ip == nil {
+		log.Fatalf("Invalid IP address: %s", ipStr)
+	}
+
+	record, err := db.City(ip)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return record
+}
+
 func ipHandler(w http.ResponseWriter, r *http.Request) {
 	ip := getIPAddress(r)
 
@@ -46,16 +69,50 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		r.Header.Get("Content-Type") == "application/json"
 
 	if json && geo {
+		record := LookupLocation(ip)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(fmt.Sprintf(`{"ip": "%s"}`, ip)))
+		response := fmt.Sprintf(`{
+        "ip": "%s",
+        "range": [%f, %f],
+        "country": "%s",
+        "region": "%s",
+        "eu": %t,
+        "timezone": "%s",
+        "city": "%s",
+        "ll": [%f, %f],
+        "metro": %d,
+        "area": %d
+    }`, ip, record.Location.Longitude, record.Location.Longitude,
+			record.Country.IsoCode, record.Subdivisions[0].IsoCode,
+			record.Country.IsInEuropeanUnion, record.Location.TimeZone,
+			record.City.Names["en"], record.Location.Latitude, record.Location.Longitude,
+			record.Location.MetroCode, record.Location.AccuracyRadius)
+		w.Write([]byte(response))
 		return
 	}
 
 	if json {
+		record := LookupLocation(ip)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(fmt.Sprintf(`{"ip": "%s"}`, ip)))
+		response := fmt.Sprintf(`{
+        "ip": "%s",
+        "range": [%f, %f],
+        "country": "%s",
+        "region": "%s",
+        "eu": %t,
+        "timezone": "%s",
+        "city": "%s",
+        "ll": [%f, %f],
+        "metro": %d,
+        "area": %d
+    }`, ip, record.Location.Longitude, record.Location.Longitude,
+			record.Country.IsoCode, record.Subdivisions[0].IsoCode,
+			record.Country.IsInEuropeanUnion, record.Location.TimeZone,
+			record.City.Names["en"], record.Location.Latitude, record.Location.Longitude,
+			record.Location.MetroCode, record.Location.AccuracyRadius)
+		w.Write([]byte(response))
 		return
 	}
 
