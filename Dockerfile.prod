@@ -1,6 +1,6 @@
 FROM golang:1.22-alpine as build
 
-RUN apk --no-cache add curl
+RUN apk --no-cache add curl wget
 
 ENV ENV=production
 
@@ -8,8 +8,7 @@ WORKDIR /go/src/app
 
 COPY . .
 
-# fk it, we gon do this manually
-# RUN curl -O https://git.io/GeoLite2-City.mmdb
+RUN wget https://git.io/GeoLite2-City.mmdb
 
 RUN go build -o ip .
 
