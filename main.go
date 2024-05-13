@@ -27,10 +27,16 @@ func getIPAddress(r *http.Request) string {
 }
 
 func ipHandler(w http.ResponseWriter, r *http.Request) {
-	ipAddress := getIPAddress(r)
+	ip := getIPAddress(r)
+
+	geo := r.URL.Query().Get("geo") == "true"
+	json := r.URL.Query().Get("json") == "true" ||
+		r.URL.Query().Get("format") == "json" ||
+		r.Header.Get("Content-Type") == "application/json"
+
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("<html><body><span>%s</span></body></html>", ipAddress)))
+	w.Write([]byte(fmt.Sprintf("<html><body><span>%s</span></body></html>", ip)))
 }
 
 func main() {
