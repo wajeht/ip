@@ -1,7 +1,6 @@
-commit:
-	npm run test
-	npm run format
-	npm run lint
+push:
+	go test
+	go fmt
 	git add -A
 	./commit.sh
 	git push --no-verify
