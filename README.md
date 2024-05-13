@@ -29,7 +29,7 @@ If the IP address was found, the lookup method returns an object with the follow
 # 💻 Development
 
 > [!NOTE]
-> Nodejs version of this project is also available via `git checkout node` after pull it down.
+> Nodejs version of this project is also available via `git checkout node` after pulling it down.
 
 Clone the repository
 
