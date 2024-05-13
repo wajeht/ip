@@ -58,7 +58,7 @@ $ go run .
 Test the application
 
 ```bash
-$ npm run test
+$ go test
 ```
 
 # 📜 License
