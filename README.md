@@ -26,38 +26,6 @@ If the IP address was found, the lookup method returns an object with the follow
 }
 ```
 
-# 💻 Development
-
-Clone the repository
-
-```bash
-$ git clone https://github.com/wajeht/ip.git
-```
-
-Copy `.env.example` to `.env`
-
-```bash
-$ cp .env.example .env
-```
-
-Install dependencies
-
-```bash
-$ npm install
-```
-
-Run development server
-
-```bash
-$ npm run dev
-```
-
-Test the application
-
-```bash
-$ npm run test
-```
-
 # 📜 License
 
 Distributed under the MIT License © wajeht. See [LICENSE](./LICENSE) for more information.
