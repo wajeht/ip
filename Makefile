@@ -8,6 +8,9 @@ push:
 test:
 	go test
 
+run:
+	go run .
+
 format:
 	go fmt
 

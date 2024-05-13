@@ -64,61 +64,63 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 	ip := getIPAddress(r)
 
 	geo := r.URL.Query().Get("geo") == "true"
-	json := r.URL.Query().Get("json") == "true" ||
-		r.URL.Query().Get("format") == "json" ||
+	json := r.URL.Query().Get("format") == "json" ||
+		r.URL.Query().Get("json") == "true" ||
 		r.Header.Get("Content-Type") == "application/json"
 
-	if json && geo {
-		record := LookupLocation(ip)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		response := fmt.Sprintf(`{
-        "ip": "%s",
-        "range": [%f, %f],
-        "country": "%s",
-        "region": "%s",
-        "eu": %t,
-        "timezone": "%s",
-        "city": "%s",
-        "ll": [%f, %f],
-        "metro": %d,
-        "area": %d
-    }`, ip, record.Location.Longitude, record.Location.Longitude,
+	record := LookupLocation(ip)
+
+	switch {
+	case json && geo:
+		response := fmt.Sprintf(`{"ip": "%s", "range": [%f, %f], "country": "%s", "region": "%s", "eu": %t, "timezone": "%s", "city": "%s", "ll": [%f, %f], "metro": %d, "area": %d}`,
+			ip, record.Location.Longitude, record.Location.Latitude,
 			record.Country.IsoCode, record.Subdivisions[0].IsoCode,
 			record.Country.IsInEuropeanUnion, record.Location.TimeZone,
-			record.City.Names["en"], record.Location.Latitude, record.Location.Longitude,
+			record.City.Names["en"], record.Location.Longitude, record.Location.Latitude,
 			record.Location.MetroCode, record.Location.AccuracyRadius)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(response))
+		return
+
+	case json:
+		response := fmt.Sprintf(`{"ip": "%s"}`, ip)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(response))
+		return
+
+	case geo:
+		formattedGeo := fmt.Sprintf(`<strong>ip:</strong> %s<br>`, ip)
+		formattedGeo += fmt.Sprintf(`<strong>Country:</strong> %s<br>`, record.Country.IsoCode)
+		formattedGeo += fmt.Sprintf(`<strong>Region:</strong> %s<br>`, record.Subdivisions[0].IsoCode)
+		formattedGeo += fmt.Sprintf(`<strong>City:</strong> %s<br>`, record.City.Names["en"])
+		formattedGeo += fmt.Sprintf(`<strong>Latitude:</strong> %f<br>`, record.Location.Latitude)
+		formattedGeo += fmt.Sprintf(`<strong>Longitude:</strong> %f<br>`, record.Location.Longitude)
+		formattedGeo += fmt.Sprintf(`<strong>Timezone:</strong> %s<br>`, record.Location.TimeZone)
+		formattedGeo += fmt.Sprintf(`<strong>Metro Code:</strong> %d<br>`, record.Location.MetroCode)
+		formattedGeo += fmt.Sprintf(`<strong>Area Code:</strong> %d<br>`, record.Location.AccuracyRadius)
+		response := fmt.Sprintf(`
+			<!DOCTYPE html>
+			<html lang="en">
+			<head>
+					<meta charset="UTF-8">
+					<title>IP</title>
+			</head>
+			<body>
+					<pre>%s</pre>
+			</body>
+			</html>`, formattedGeo)
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(response))
 		return
 	}
 
-	if json {
-		record := LookupLocation(ip)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		response := fmt.Sprintf(`{
-        "ip": "%s",
-        "range": [%f, %f],
-        "country": "%s",
-        "region": "%s",
-        "eu": %t,
-        "timezone": "%s",
-        "city": "%s",
-        "ll": [%f, %f],
-        "metro": %d,
-        "area": %d
-    }`, ip, record.Location.Longitude, record.Location.Longitude,
-			record.Country.IsoCode, record.Subdivisions[0].IsoCode,
-			record.Country.IsInEuropeanUnion, record.Location.TimeZone,
-			record.City.Names["en"], record.Location.Latitude, record.Location.Longitude,
-			record.Location.MetroCode, record.Location.AccuracyRadius)
-		w.Write([]byte(response))
-		return
-	}
-
+	response := ip
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("<html><body><span>%s</span></body></html>", ip)))
+	w.Write([]byte(response))
 }
 
 func main() {
