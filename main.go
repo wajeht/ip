@@ -152,7 +152,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		</html>`, ip)
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(ip))
+	w.Write([]byte(response))
 }
 
 func faviconHandler(w http.ResponseWriter, r *http.Request) {
