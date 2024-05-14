@@ -125,6 +125,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 			<html lang="en">
 			<head>
 					<meta charset="UTF-8">
+					<script defer data-domain="ip.jaw.dev" src="https://plausible.jaw.dev/js/script.js"></script>
 					<title>IP</title>
 			</head>
 			<body>
@@ -137,15 +138,33 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := fmt.Sprintf(`
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+				<meta charset="UTF-8">
+				<script defer data-domain="ip.jaw.dev" src="https://plausible.jaw.dev/js/script.js"></script>
+				<title>ip</title>
+		</head>
+		<body>
+				<pre>%s</pre>
+		</body>
+		</html>`, ip)
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(ip))
+}
+
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./favicon.ico")
 }
 
 func main() {
 	const PORT = 80
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /favicon.ico", faviconHandler)
 
 	mux.HandleFunc("GET /healthz", healthzHandler)
 
