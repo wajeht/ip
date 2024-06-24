@@ -1,3 +1,7 @@
+commit:
+	@git add -A
+	@aicommits --type conventional
+
 push:
 	go test
 	go fmt ./...
@@ -6,21 +10,21 @@ push:
 	git push --no-verify
 
 test:
-	go test ./...
+	@go test ./...
 
 build:
-	mkdir -p bin
-	go build -o bin/ip ./cmd/ip
+	@mkdir -p bin
+	@go build -o bin/ip ./cmd/ip
 
 run:
-	go run ./cmd/ip
+	@go run ./cmd/ip
 
 format:
-	go fmt ./...
+	@go fmt ./...
 
 update-db:
-	rm -f GeoLite2-City.mmdb
-	wget https://git.io/GeoLite2-City.mmdb
+	@rm -f GeoLite2-City.mmdb
+	@wget https://git.io/GeoLite2-City.mmdb
 
 fix-git:
 	git rm -r --cached .
