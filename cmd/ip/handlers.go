@@ -3,10 +3,22 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
+// TODO: put this in filer server
+func robotsHandler(w http.ResponseWriter, r *http.Request) {
+	basePath, _ := os.Getwd()
+	filePath := filepath.Join(basePath, "web/static/robots.txt")
+	http.ServeFile(w, r, filePath)
+}
+
+// TODO: put this in filer server
 func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./favicon.ico")
+	basePath, _ := os.Getwd()
+	filePath := filepath.Join(basePath, "web/static/favicon.ico")
+	http.ServeFile(w, r, filePath)
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
