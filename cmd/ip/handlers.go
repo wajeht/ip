@@ -7,14 +7,14 @@ import (
 	"path/filepath"
 )
 
-// TODO: put this in filer server
+// TODO: put this in file server
 func robotsHandler(w http.ResponseWriter, r *http.Request) {
 	basePath, _ := os.Getwd()
 	filePath := filepath.Join(basePath, "web/static/robots.txt")
 	http.ServeFile(w, r, filePath)
 }
 
-// TODO: put this in filer server
+// TODO: put this in file server
 func faviconHandler(w http.ResponseWriter, r *http.Request) {
 	basePath, _ := os.Getwd()
 	filePath := filepath.Join(basePath, "web/static/favicon.ico")
