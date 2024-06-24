@@ -3,11 +3,11 @@ commit:
 	@aicommits --type conventional
 
 push:
-	go test
-	go fmt ./...
-	git add -A
-	aicommits --type conventional
-	git push --no-verify
+	@go test
+	@go fmt ./...
+	@git add -A
+	@aicommits --type conventional
+	@git push --no-verify
 
 test:
 	@go test ./...
@@ -27,6 +27,6 @@ update-db:
 	@wget https://git.io/GeoLite2-City.mmdb
 
 fix-git:
-	git rm -r --cached .
-	git add .
-	git commit -m "chore: untrack files in .gitignore"
+	@git rm -r --cached .
+	@git add .
+	@git commit -m "chore: untrack files in .gitignore"
