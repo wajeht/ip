@@ -11,7 +11,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /.ico", faviconHandler)
+	mux.HandleFunc("GET /favicon.ico", faviconHandler)
 
 	mux.HandleFunc("GET /robots.txt", robotsHandler)
 
