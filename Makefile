@@ -3,7 +3,7 @@ commit:
 	@aicommits --type conventional
 
 push:
-	@go test
+	@go test ./...
 	@go fmt ./...
 	@git add -A
 	@aicommits --type conventional

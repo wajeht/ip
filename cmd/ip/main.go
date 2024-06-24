@@ -6,10 +6,6 @@ import (
 	"net/http"
 )
 
-func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./favicon.ico")
-}
-
 func main() {
 	const PORT = 80
 

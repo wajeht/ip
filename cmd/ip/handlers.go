@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./favicon.ico")
+}
+
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	json := r.URL.Query().Get("json") == "true" ||
 		r.Header.Get("Content-Type") == "application/json"
