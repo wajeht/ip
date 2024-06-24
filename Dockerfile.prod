@@ -16,4 +16,4 @@ EXPOSE 80
 
 HEALTHCHECK CMD curl -f http://localhost:80/healthz || exit 1
 
-CMD ["./ip"]
+CMD ["./bin/ip"]
