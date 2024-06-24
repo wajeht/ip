@@ -1,27 +1,32 @@
+commit:
+	@git add -A
+	@aicommits --type conventional
+
 push:
-	go test
-	go fmt
-	git add -A
-	aicommits --type conventional
-	git push --no-verify
+	@go test ./...
+	@go fmt ./...
+	@git add -A
+	@aicommits --type conventional
+	@git push --no-verify
 
 test:
-	go test
+	@go test ./...
 
 build:
-	go build
+	@mkdir -p bin
+	@go build -o bin/ip ./cmd/ip
 
 run:
-	go run .
+	@go run ./cmd/ip
 
 format:
-	go fmt
+	@go fmt ./...
 
 update-db:
-	rm -f GeoLite2-City.mmdb
-	wget https://git.io/GeoLite2-City.mmdb
+	@rm -f GeoLite2-City.mmdb
+	@wget https://git.io/GeoLite2-City.mmdb
 
 fix-git:
-	git rm -r --cached .
-	git add .
-	git commit -m "chore: untrack files in .gitignore"
+	@git rm -r --cached .
+	@git add .
+	@git commit -m "chore: untrack files in .gitignore"

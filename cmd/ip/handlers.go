@@ -2,13 +2,24 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
 	"net/http"
-	"strings"
-
-	"github.com/oschwald/geoip2-golang"
+	"os"
+	"path/filepath"
 )
+
+// TODO: put this in filer server
+func robotsHandler(w http.ResponseWriter, r *http.Request) {
+	basePath, _ := os.Getwd()
+	filePath := filepath.Join(basePath, "web/static/robots.txt")
+	http.ServeFile(w, r, filePath)
+}
+
+// TODO: put this in filer server
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	basePath, _ := os.Getwd()
+	filePath := filepath.Join(basePath, "web/static/favicon.ico")
+	http.ServeFile(w, r, filePath)
+}
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	json := r.URL.Query().Get("json") == "true" ||
@@ -24,43 +35,6 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Ok</title></head><body><span>Ok</span></body></html>"))
-}
-
-func getIPAddress(r *http.Request) string {
-	ipAddress := r.Header.Get("x-forwarded-for")
-
-	if ipAddress == "" {
-		ipAddress, _, _ = net.SplitHostPort(r.RemoteAddr)
-	} else {
-		ips := strings.Split(ipAddress, ", ")
-		ipAddress = ips[0]
-	}
-
-	return ipAddress
-}
-
-func LookupLocation(ipStr string) *geoip2.City {
-	db, err := geoip2.Open("GeoLite2-City.mmdb")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer db.Close()
-
-	ip := net.ParseIP(ipStr)
-
-	if ip == nil {
-		log.Fatalf("Invalid IP address: %s", ipStr)
-	}
-
-	record, err := db.City(ip)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return record
 }
 
 func ipHandler(w http.ResponseWriter, r *http.Request) {
@@ -153,28 +127,4 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(response))
-}
-
-func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./favicon.ico")
-}
-
-func main() {
-	const PORT = 80
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("GET /favicon.ico", faviconHandler)
-
-	mux.HandleFunc("GET /healthz", healthzHandler)
-
-	mux.HandleFunc("GET /", ipHandler)
-
-	log.Println("Server was started on port:", PORT)
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux)
-
-	if err != nil {
-		log.Fatalf("Error starting server: %s", err)
-	}
 }

@@ -153,3 +153,6 @@ dist
 # Go workspace file
 go.work
 go.work.sum
+
+./bin/ip
+bin/ip
