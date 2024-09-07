@@ -85,7 +85,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case geo:
-		formattedGeo := fmt.Sprintf(`<strong>ip:</strong> %s<br>`, ip)
+		formattedGeo := fmt.Sprintf(`<strong>IP:</strong> %s<br>`, ip)
 		formattedGeo += fmt.Sprintf(`<strong>Country:</strong> %s<br>`, record.Country.IsoCode)
 		formattedGeo += fmt.Sprintf(`<strong>Region:</strong> %s<br>`, record.Subdivisions[0].IsoCode)
 		formattedGeo += fmt.Sprintf(`<strong>City:</strong> %s<br>`, record.City.Names["en"])
