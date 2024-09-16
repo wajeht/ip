@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // TODO: put this in file server
@@ -42,9 +43,12 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 
 	geo := r.URL.Query().Get("geo") == "true"
 
+	userAgent := r.Header.Get("User-Agent")
+
 	json := r.URL.Query().Get("format") == "json" ||
 		r.URL.Query().Get("json") == "true" ||
-		r.Header.Get("Content-Type") == "application/json"
+		r.Header.Get("Content-Type") == "application/json" ||
+		strings.Contains(userAgent, "curl")
 
 	if notFound && json {
 		w.Header().Set("Content-Type", "application/json")
