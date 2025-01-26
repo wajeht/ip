@@ -35,6 +35,11 @@ If the IP address was found, the lookup method returns an object with the follow
 }
 ```
 
+# 📑 Docs
+
+- See [DEVELOPMENT](./docs/development.md) for `development` guide.
+- See [CONTRIBUTION](./docs/contribution.md) for `contribution` guide.
+
 # 📜 License
 
-Distributed under the MIT License © wajeht. See [LICENSE](./LICENSE) for more information.
+Distributed under the MIT License © [wajeht](https://github.com/wajeht). See [LICENSE](./LICENSE) for more information.
