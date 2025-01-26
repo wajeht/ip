@@ -4,6 +4,15 @@
 
 **whatismyipaddress.com** in just a few lines of code.
 
+## 📖 Usage
+```bash
+$ curl -s https://ip.jaw.dev/ | jq
+```
+
+```bash
+$ curl -s https://ip.jaw.dev\?geo\=true | jq
+```
+
 If the IP address was found, the lookup method returns an object with the following structure:
 
 ```javascript
@@ -24,41 +33,6 @@ If the IP address was found, the lookup method returns an object with the follow
    metro: 420,                    // Metro code
    area: 69                       // The approximate accuracy radius (km), around the latitude and longitude
 }
-```
-
-# 💻 Development
-
-> [!NOTE]
-> Nodejs version of this project is also available via `git checkout node` after pulling it down.
-
-Clone the repository
-
-```bash
-$ git clone https://github.com/wajeht/ip.git
-```
-
-Copy `.env.example` to `.env`
-
-```bash
-$ cp .env.example .env
-```
-
-Install dependencies
-
-```bash
-$ go install
-```
-
-Run development server
-
-```bash
-$ go run .
-```
-
-Test the application
-
-```bash
-$ go test
 ```
 
 # 📜 License

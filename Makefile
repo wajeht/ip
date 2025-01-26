@@ -1,12 +1,12 @@
 commit:
 	@git add -A
-	@aicommits --type conventional
+	@git auto
 
 push:
 	@go test ./...
 	@go fmt ./...
 	@git add -A
-	@aicommits --type conventional
+	@git auto
 	@git push --no-verify
 
 test:
