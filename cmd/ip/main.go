@@ -11,10 +11,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// TODO: put this in file server
 	mux.HandleFunc("GET /favicon.ico", faviconHandler)
 
-	// TODO: put this in file server
 	mux.HandleFunc("GET /robots.txt", robotsHandler)
 
 	mux.HandleFunc("GET /healthz", healthzHandler)

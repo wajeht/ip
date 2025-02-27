@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-// TODO: put this in file server
 func robotsHandler(w http.ResponseWriter, r *http.Request) {
 	basePath, _ := os.Getwd()
 	filePath := filepath.Join(basePath, "web/static/robots.txt")
 	http.ServeFile(w, r, filePath)
 }
 
-// TODO: put this in file server
 func faviconHandler(w http.ResponseWriter, r *http.Request) {
 	basePath, _ := os.Getwd()
 	filePath := filepath.Join(basePath, "web/static/favicon.ico")
@@ -66,7 +65,23 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 
 	ip := getIPAddress(r)
 
-	record := LookupLocation(ip)
+	record, err := LookupLocation(ip)
+
+	if err != nil {
+		log.Printf("Error looking up location: %v", err)
+
+		if json {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(`{"error": "Failed to lookup location"}`))
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Error</title></head><body><span>Failed to lookup location</span></body></html>"))
+		return
+	}
 
 	switch {
 	case json && geo:

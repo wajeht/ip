@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -22,11 +22,11 @@ func getIPAddress(r *http.Request) string {
 	return ipAddress
 }
 
-func LookupLocation(ipStr string) *geoip2.City {
+func LookupLocation(ipStr string) (*geoip2.City, error) {
 	db, err := geoip2.Open("GeoLite2-City.mmdb")
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	defer db.Close()
@@ -34,14 +34,14 @@ func LookupLocation(ipStr string) *geoip2.City {
 	ip := net.ParseIP(ipStr)
 
 	if ip == nil {
-		log.Fatalf("Invalid IP address: %s", ipStr)
+		return nil, fmt.Errorf("invalid IP address: %s", ipStr)
 	}
 
 	record, err := db.City(ip)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return record
+	return record, nil
 }
