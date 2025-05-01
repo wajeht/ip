@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 )
 
-func robotsHandler(w http.ResponseWriter, r *http.Request) {
-	basePath, _ := os.Getwd()
-	filePath := filepath.Join(basePath, "web/static/robots.txt")
-	http.ServeFile(w, r, filePath)
+func faviconHandler(fileServer http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/static/favicon.ico"
+		fileServer.ServeHTTP(w, r)
+	}
 }
 
-func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	basePath, _ := os.Getwd()
-	filePath := filepath.Join(basePath, "web/static/favicon.ico")
-	http.ServeFile(w, r, filePath)
+func robotsHandler(fileServer http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/static/robots.txt"
+		fileServer.ServeHTTP(w, r)
+	}
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {

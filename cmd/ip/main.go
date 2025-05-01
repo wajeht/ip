@@ -4,26 +4,26 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/wajeht/ip/assets"
 )
 
+const PORT = 80
+
 func main() {
-	const PORT = 80
-
 	mux := http.NewServeMux()
+	fileServer := http.FileServer(http.FS(assets.EmbeddedFiles))
 
-	mux.HandleFunc("GET /favicon.ico", faviconHandler)
+	mux.Handle("GET /static/", fileServer)
 
-	mux.HandleFunc("GET /robots.txt", robotsHandler)
+	mux.HandleFunc("GET /favicon.ico", faviconHandler(fileServer))
+
+	mux.HandleFunc("GET /robots.txt", robotsHandler(fileServer))
 
 	mux.HandleFunc("GET /healthz", healthzHandler)
 
 	mux.HandleFunc("GET /", ipHandler)
 
 	log.Println("Server was started on port:", PORT)
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux)
-
-	if err != nil {
-		log.Fatalf("Error starting server: %s", err)
-	}
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux))
 }
