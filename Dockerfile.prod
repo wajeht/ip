@@ -1,24 +1,19 @@
 FROM golang:1.22-alpine AS build
 
-RUN apk --no-cache add wget
+RUN apk --no-cache add curl wget
 
-WORKDIR /app
+ENV ENV=production
+
+WORKDIR /go/src/app
 
 RUN wget -O GeoLite2-City.mmdb https://git.io/GeoLite2-City.mmdb
 
 COPY . .
 
-RUN go build -ldflags="-s -w" -o ip ./cmd/ip
-
-FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=build /app/ip .
-COPY --from=build /app/GeoLite2-City.mmdb .
+RUN go build -o bin/ip ./cmd/ip
 
 EXPOSE 80
 
 HEALTHCHECK CMD curl -f http://localhost:80/healthz || exit 1
 
-CMD ["./ip"]
+CMD ["./bin/ip"]
