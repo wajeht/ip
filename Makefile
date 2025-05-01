@@ -30,3 +30,9 @@ fix-git:
 	@git rm -r --cached .
 	@git add .
 	@git commit -m "chore: untrack files in .gitignore"
+
+docker:
+	@docker build -f Dockerfile.prod -t ip .
+
+docker-run:
+	@docker run --rm -p 80:80 ip

@@ -2,23 +2,36 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/wajeht/ip/assets"
 )
 
-func faviconHandler(fileServer http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = "/static/favicon.ico"
-		fileServer.ServeHTTP(w, r)
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	f, err := assets.EmbeddedFiles.Open("static/favicon.ico")
+	if err != nil {
+		http.NotFound(w, r)
+		return
 	}
+	defer f.Close()
+
+	w.Header().Set("Content-Type", "image/x-icon")
+	io.Copy(w, f)
 }
 
-func robotsHandler(fileServer http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = "/static/robots.txt"
-		fileServer.ServeHTTP(w, r)
+func robotsHandler(w http.ResponseWriter, r *http.Request) {
+	f, err := assets.EmbeddedFiles.Open("static/robots.txt")
+	if err != nil {
+		http.NotFound(w, r)
+		return
 	}
+	defer f.Close()
+
+	w.Header().Set("Content-Type", "text/plain")
+	io.Copy(w, f)
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {

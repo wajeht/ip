@@ -16,9 +16,9 @@ func main() {
 
 	mux.Handle("GET /static/", fileServer)
 
-	mux.HandleFunc("GET /favicon.ico", faviconHandler(fileServer))
+	mux.HandleFunc("GET /favicon.ico", faviconHandler)
 
-	mux.HandleFunc("GET /robots.txt", robotsHandler(fileServer))
+	mux.HandleFunc("GET /robots.txt", robotsHandler)
 
 	mux.HandleFunc("GET /healthz", healthzHandler)
 
