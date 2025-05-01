@@ -156,3 +156,4 @@ go.work.sum
 
 ./bin/ip
 bin/ip
+.vscode
