@@ -13,11 +13,10 @@ test:
 	@go test ./...
 
 build:
-	@mkdir -p bin
-	@go build -o bin/ip ./cmd/ip
+	@go build -o ip .
 
 run:
-	@go run ./cmd/ip
+	@go run .
 
 format:
 	@go fmt ./...
@@ -32,7 +31,7 @@ fix-git:
 	@git commit -m "chore: untrack files in .gitignore"
 
 docker:
-	@docker build -f Dockerfile.prod -t ip .
+	@docker build -f Dockerfile -t ip .
 
 docker-run:
 	@docker run --rm -p 80:80 ip
