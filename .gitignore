@@ -154,6 +154,5 @@ dist
 go.work
 go.work.sum
 
-./bin/ip
-bin/ip
+ip
 .vscode
