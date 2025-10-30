@@ -1,12 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
+	"time"
 
 	"github.com/oschwald/geoip2-golang"
 	"github.com/wajeht/ip/assets"
@@ -21,7 +26,9 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 
 	w.Header().Set("Content-Type", "image/x-icon")
-	io.Copy(w, f)
+	if _, err := io.Copy(w, f); err != nil {
+		log.Printf("Error writing favicon: %v", err)
+	}
 }
 
 func robotsHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +40,9 @@ func robotsHandler(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 
 	w.Header().Set("Content-Type", "text/plain")
-	io.Copy(w, f)
+	if _, err := io.Copy(w, f); err != nil {
+		log.Printf("Error writing robots.txt: %v", err)
+	}
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,13 +52,17 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	if json {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"message": "ok"}`))
+		if _, err := w.Write([]byte(`{"message": "ok"}`)); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Ok</title></head><body><span>Ok</span></body></html>"))
+	if _, err := w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Ok</title></head><body><span>Ok</span></body></html>")); err != nil {
+		log.Printf("Error writing response: %v", err)
+	}
 }
 
 func ipHandler(w http.ResponseWriter, r *http.Request) {
@@ -67,14 +80,18 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 	if notFound && json {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{ message: "Not found" }`))
+		if _, err := w.Write([]byte(`{"message": "Not found"}`)); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 	}
 
 	if notFound {
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Not found</title></head><body><span>Not found</span></body></html>"))
+		if _, err := w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Not found</title></head><body><span>Not found</span></body></html>")); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 	}
 
@@ -88,13 +105,17 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		if json {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(`{"error": "Failed to lookup location"}`))
+			if _, err := w.Write([]byte(`{"error": "Failed to lookup location"}`)); err != nil {
+				log.Printf("Error writing response: %v", err)
+			}
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Error</title></head><body><span>Failed to lookup location</span></body></html>"))
+		if _, err := w.Write([]byte("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Error</title></head><body><span>Failed to lookup location</span></body></html>")); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 	}
 
@@ -108,14 +129,18 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 			record.Location.MetroCode, record.Location.AccuracyRadius)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		if _, err := w.Write([]byte(response)); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 
 	case json:
 		response := fmt.Sprintf(`{"ip": "%s"}`, ip)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		if _, err := w.Write([]byte(response)); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 
 	case geo:
@@ -142,7 +167,9 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 			</html>`, formattedGeo)
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		if _, err := w.Write([]byte(response)); err != nil {
+			log.Printf("Error writing response: %v", err)
+		}
 		return
 	}
 
@@ -160,7 +187,9 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		</html>`, ip)
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(response))
+	if _, err := w.Write([]byte(response)); err != nil {
+		log.Printf("Error writing response: %v", err)
+	}
 }
 
 func getIPAddress(r *http.Request) string {
@@ -200,7 +229,13 @@ func LookupLocation(ipStr string) (*geoip2.City, error) {
 	return record, nil
 }
 
-const PORT = 80
+const (
+	port            = 80
+	shutdownTimeout = 30 * time.Second
+	readTimeout     = 15 * time.Second
+	writeTimeout    = 15 * time.Second
+	idleTimeout     = 60 * time.Second
+)
 
 func main() {
 	mux := http.NewServeMux()
@@ -215,7 +250,33 @@ func main() {
 
 	mux.HandleFunc("GET /", ipHandler)
 
-	log.Println("Server was started on port:", PORT)
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", port),
+		Handler:      mux,
+		ReadTimeout:  readTimeout,
+		WriteTimeout: writeTimeout,
+		IdleTimeout:  idleTimeout,
+	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux))
+	go func() {
+		log.Printf("Server started on port %d", port)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed to start: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("Server exited gracefully")
 }
