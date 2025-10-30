@@ -204,9 +204,8 @@ const PORT = 80
 
 func main() {
 	mux := http.NewServeMux()
-	fileServer := http.FileServer(http.FS(assets.EmbeddedFiles))
 
-	mux.Handle("GET /static/", fileServer)
+	mux.Handle("GET /static/", http.FileServer(http.FS(assets.EmbeddedFiles)))
 
 	mux.HandleFunc("GET /favicon.ico", faviconHandler)
 
@@ -217,5 +216,6 @@ func main() {
 	mux.HandleFunc("GET /", ipHandler)
 
 	log.Println("Server was started on port:", PORT)
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", PORT), mux))
 }
