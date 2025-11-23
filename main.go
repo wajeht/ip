@@ -46,7 +46,7 @@ func robotsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
-	json := r.URL.Query().Get("json") == "true" ||
+	json := r.URL.Query().Get("format") == "json" ||
 		r.Header.Get("Content-Type") == "application/json"
 
 	if json {
