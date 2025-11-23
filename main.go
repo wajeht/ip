@@ -68,7 +68,9 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 func ipHandler(w http.ResponseWriter, r *http.Request) {
 	notFound := r.URL.Path != "/"
 
-	geo := r.URL.Query().Get("geo") == "true"
+	geo := r.URL.Query().Get("fields") == "geo" ||
+		r.URL.Query().Get("fields") == "full" ||
+		r.URL.Query().Get("geo") == "true"
 
 	userAgent := r.Header.Get("User-Agent")
 

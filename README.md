@@ -10,14 +10,14 @@ $ curl -s https://ip.jaw.dev/ | jq
 ```
 
 ```bash
-$ curl -s https://ip.jaw.dev\?geo\=true | jq
+$ curl -s https://ip.jaw.dev\?fields\=geo | jq
 ```
 
 If the IP address was found, the lookup method returns an object with the following structure:
 
 ```javascript
-// https://ip.jaw.dev/?geo=true
-// https://ip.jaw.dev/?geo=true&format=true
+// https://ip.jaw.dev/?fields=geo
+// https://ip.jaw.dev/?fields=geo&format=json
 {
    ip: '127.0.0.1',               // ip address
    range: [420, 69],              // <low bound of IP block>, <high bound of IP block>
