@@ -1,10 +1,10 @@
-# 🌎 Ip
+# Ip
 
 [![Node.js CI](https://github.com/wajeht/ip/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wajeht/ip/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/wajeht/ip/blob/main/LICENSE) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/wajeht/ip)
 
 **whatismyipaddress.com** in just a few lines of code.
 
-## 📖 Usage
+## Usage
 ```bash
 $ curl -s https://ip.jaw.dev/ | jq
 ```
@@ -35,11 +35,11 @@ If the IP address was found, the lookup method returns an object with the follow
 }
 ```
 
-# 📑 Docs
+# Docs
 
 - See [DEVELOPMENT](./docs/development.md) for `development` guide.
 - See [CONTRIBUTION](./docs/contribution.md) for `contribution` guide.
 
-# 📜 License
+# License
 
 Distributed under the MIT License © [wajeht](https://github.com/wajeht). See [LICENSE](./LICENSE) for more information.
