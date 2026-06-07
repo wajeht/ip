@@ -160,7 +160,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 			<html lang="en">
 			<head>
 					<meta charset="UTF-8">
-					<script defer data-domain="ip.jaw.dev" src="https://plausible.jaw.dev/js/script.js"></script>
+					<script defer src="https://umami.jaw.dev/script.js" data-website-id="93ac1803-cb80-498d-a7b9-7a59373a32c1"></script>
 					<title>IP</title>
 			</head>
 			<body>
@@ -180,7 +180,7 @@ func ipHandler(w http.ResponseWriter, r *http.Request) {
 		<html lang="en">
 		<head>
 				<meta charset="UTF-8">
-				<script defer data-domain="ip.jaw.dev" src="https://plausible.jaw.dev/js/script.js"></script>
+				<script defer src="https://umami.jaw.dev/script.js" data-website-id="93ac1803-cb80-498d-a7b9-7a59373a32c1"></script>
 				<title>ip</title>
 		</head>
 		<body>
