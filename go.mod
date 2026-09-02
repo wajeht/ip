@@ -1,6 +1,6 @@
 module github.com/wajeht/ip
 
-go 1.27.0
+go 1.27.1
 
 require github.com/oschwald/geoip2-golang v1.13.0
 
