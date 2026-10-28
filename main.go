@@ -13,7 +13,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/oschwald/geoip2-golang"
+	"github.com/oschwald/geoip2-golang/v2"
 	"github.com/wajeht/ip/assets"
 )
 
